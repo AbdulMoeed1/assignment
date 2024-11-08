@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Bid Engine</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="./assets/favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="./assets/favicon/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="./assets/favicon/favicon-16x16.png"
+    />
+    <link rel="manifest" href="./assets/favicon/site.webmanifest" />
+    <link
+      rel="mask-icon"
+      href="./assets/favicon/safari-pinned-tab.svg"
+      color="#5bbad5"
+    />
+    <meta name="msapplication-TileColor" content="#da532c" />
+    <meta name="theme-color" content="#ffffff" />
+  </head>
+  <body>
+    <div id="home">
+      <div class="main-container">
+        <div :class="['sidebar', isDrawerOpen ? 'open' : '']">
+          <button @click="toggleDrawer()" class="close-circle">
+            <img
+              src="./assets/close-menu.svg"
+              width="15px"
+              height="15px"
+              alt="icon"
+            />
+          </button>
+          <div class="sibebar-wrapper">
+            <a href="#" class="sidebar-logo">
+              <img
+                :src="!isDrawerOpen ? './assets/logo-small.svg' : './assets/logo-dark.svg'"
+                :width="!isDrawerOpen ? '30px' :  '142px'"
+                height="30px"
+                alt="logo"
+              />
+            </a>
+            <div class="sidebar-menu">
+              <a
+                v-for="(item, index) in menu"
+                :key="index"
+                :href="item.to"
+                @click="menuClick(index)"
+                :class="[
+                  'sidebar-menu-item',
+                  index === activeItemIndex ? 'active-item-' + index : '',
+                ]"
+              >
+                <span class="menu-icon">
+                  <img
+                    :src="index === activeItemIndex ? item.activeIcon : item.icon"
+                    alt="icon"
+                  />
+                </span>
+                <div class="menu-label">{{ item.label }}</div>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="content">
+          <header>
+            <a href="#" class="bell-icon">
+              <img src="./assets/bell-icon.svg" alt="icon-img" />
+              <span></span>
+            </a>
+            <a href="#" class="avatar">
+              <img src="./assets/user.png" alt="avatar" />
+            </a>
+          </header>
+          <div class="campaign">
+            <div class="content-here">
+              <div class="flex">
+                <div class="campaign-headings">
+                  <h3>Campaign</h3>
+                  <p>
+                    Create a new campaign, define budgets and target customer
+                    segments
+                  </p>
+                </div>
+                <div class="campaign-button">
+                  <a href="">See how it works </a>
+                  <a href=""><img src="./assets/play.svg" alt="" /></a>
+                </div>
+              </div>
+              <div class="bid-engine-tabs">
+                <div class="tab">
+                  <button
+                    :class="['tablinks', activeTab === 'car' ? 'active' : '']"
+                    @click="handleTab('car')"
+                  >
+                    <div class="flex-tabs">
+                      <div class="car-image">
+                        <img src="./assets/car.svg" alt="" />
+                      </div>
+                      <div class="heading-tabs">
+                        <h3 class="m-0">Car</h3>
+                      </div>
+                    </div>
+                  </button>
+                  <button
+                    :class="['tablinks', activeTab === 'motorcycle' ? 'active' : '']"
+                    @click="handleTab('motorcycle')"
+                    disabled
+                  >
+                    <div class="flex-tabs">
+                      <div class="car-image">
+                        <img src="./assets/bike.svg" alt="" />
+                      </div>
+                      <div class="heading-tabs">
+                        <h3 class="m-0">Motorcycle</h3>
+                        <p class="m-0">Coming Soon</p>
+                      </div>
+                    </div>
+                  </button>
+                  <button
+                    :class="['tablinks', activeTab === 'home' ? 'active' : '']"
+                    @click="handleTab('home')"
+                    disabled
+                  >
+                    <div class="flex-tabs">
+                      <div class="car-image">
+                        <img src="./assets/home.svg" alt="" />
+                      </div>
+                      <div class="heading-tabs">
+                        <h3 class="m-0">Home</h3>
+                        <p class="m-0">Coming Soon</p>
+                      </div>
+                    </div>
+                  </button>
+                </div>
+
+                <div :class="['tabcontent', activeTab === 'car' ? 'show' : '']">
+                  <h2>Setup Campaign</h2>
+                  <div class="flex-components">
+                    <div class="states-multiselector">
+                      <div class="mb-2">
+                        <tooltip>
+                          <h3 class="m-0">States</h3>
+                        </tooltip>
+                      </div>
+                      <multi-select-dropdown
+                        :default-values="['California', 'New York']"
+                        :options="['California', 'New York','United States']"
+                      ></multi-select-dropdown>
+                    </div>
+                    <div class="max-cpc">
+                      <div class="flex-max-cpc">
+                        <tooltip>
+                          <h3 class="m-0">Max CPC</h3>
+                        </tooltip>
+                        <h5 class="m-0">$5.00 min</h5>
+                      </div>
+                      <div class="dollar-mask">
+                        <input
+                          class="cpc"
+                          type="text"
+                          :value="cpc"
+                          @input="event => cpc = event.target.value"
+                        />
+                      </div>
+                    </div>
+                    <div class="enable-campaign">
+                      <label class="switch">
+                        <input type="checkbox" />
+                        <span class="slider round"></span>
+                      </label>
+                      <div class="toggle-heading">
+                        <h4 class="m-0">Enable Campaign</h4>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- accordians -->
+
+                  <div v-if="cpc" class="accordion">
+                    <div
+                      :class="['accordion-item', openCollapse.includes('states') ? 'active' : '']"
+                    >
+                      <div
+                        @click="handleCollapse('states')"
+                        class="accordion-item-header"
+                      >
+                        <h4>States</h4>
+                      </div>
+                      <!-- /.accordion-item-header -->
+                      <div class="accordion-item-body">
+                        <div class="accordion-item-body-content">
+                          <div class="flex-accordians-body one">
+                            <div class="accordian-body-one">
+                              <h4>Active</h4>
+                            </div>
+                            <div class="accordian-body-two">
+                              <h4>States</h4>
+                            </div>
+                            <div class="accordian-body-three">
+                              <h4>Adjusted Max CPC</h4>
+                            </div>
+                          </div>
+                          <!-- two -->
+                          <div class="flex-accordians-body two">
+                            <div class="accordian-body-one">
+                              <label class="switch">
+                                <input type="checkbox" checked />
+                                <span class="slider round"></span>
+                              </label>
+                            </div>
+                            <div class="accordian-body-two">
+                              <h4>California</h4>
+                            </div>
+                            <div class="accordian-body-three flex-two">
+                              <dropdown
+                                default-value="5%"
+                                :options="staticPercentage"
+                              ></dropdown>
+                              <dropdown
+                                default-value="Increase"
+                                :options="['Increase', 'Decrease']"
+                              ></dropdown>
+                            </div>
+                          </div>
+                          <!-- three -->
+                          <div class="flex-accordians-body three">
+                            <div class="accordian-body-one">
+                              <label class="switch">
+                                <input type="checkbox" checked />
+                                <span class="slider round"></span>
+                              </label>
+                            </div>
+                            <div class="accordian-body-two">
+                              <h4>California</h4>
+                            </div>
+                            <div class="accordian-body-three flex-two">
+                              <dropdown
+                                default-value="15%"
+                                :options="staticPercentage"
+                              ></dropdown>
+                              <dropdown
+                                default-value="Increase"
+                                :options="['Increase', 'Decrease']"
+                              ></dropdown>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- /.accordion-item-body -->
+                    </div>
+                    <!-- /.accordion-item -->
+                  </div>
+                  <!-- toogles -->
+                  <div class="flex-toggles-advance">
+                    <div class="switch-change">
+                      <label class="switch">
+                        <input type="checkbox" checked />
+                        <span class="slider round"></span>
+                      </label>
+                    </div>
+                    <div class="toggle-heading">
+                      <tooltip>
+                        <h4 class="m-0">
+                          Would you like to receive phone calls for these
+                          profiles? <span>(+$30/call)</span>
+                        </h4>
+                      </tooltip>
+                    </div>
+                  </div>
+                  <div class="flex-toggles-advance">
+                    <div class="swich-change">
+                      <label for="myCheck" class="switch">
+                        <input
+                          id="myCheck"
+                          type="checkbox"
+                          @click="toggleAdvanceFeatures"
+                        />
+                        <span class="slider round"></span>
+                      </label>
+                    </div>
+                    <div class="toggle-heading">
+                      <tooltip>
+                        <h4 class="m-0">Advanced targeting</h4>
+                      </tooltip>
+                    </div>
+                  </div>
+
+                  <!--  -->
+                  <section
+                    class="targeting-section"
+                    v-if="areAdvanceFeaturesEnabled"
+                  >
+                    <h2>Advanced Targeting</h2>
+                    <div class="accordion parent">
+                      <div
+                        :class="['accordion-item', openCollapse.includes('brand') ? 'active' : '']"
+                      >
+                        <div
+                          class="accordion-item-header"
+                          @click="handleCollapse('brand')"
+                        >
+                          <h4>Brand</h4>
+                        </div>
+                        <!-- /.accordion-item-header -->
+                        <div class="accordion-item-body">
+                          <div class="accordion-item-body-content">
+                            <div class="flex-accordians-body one">
+                              <div class="accordian-body-one">
+                                <h4>Active</h4>
+                              </div>
+                              <div class="accordian-body-two">
+                                <h4>Brands</h4>
+                              </div>
+                              <div class="accordian-body-check">
+                                <h4>Exclude</h4>
+                              </div>
+                              <div class="accordian-body-three">
+                                <h4>Adjusted Max CPC</h4>
+                              </div>
+                            </div>
+                            <!-- two -->
+                            <div class="flex-accordians-body two">
+                              <div class="accordian-body-one">
+                                <label class="switch">
+                                  <input type="checkbox" checked />
+                                  <span class="slider round"></span>
+                                </label>
+                              </div>
+                              <div class="accordian-body-two">
+                                <h4>California</h4>
+                              </div>
+                              <div class="checkboc">
+                                <input type="checkbox" />
+                                <span class="checkmark"></span>
+                              </div>
+                              <div class="accordian-body-three flex-two">
+                                <dropdown
+                                  default-value="5%"
+                                  :options="staticPercentage"
+                                ></dropdown>
+                                <dropdown
+                                  default-value="Increase"
+                                  :options="['Increase', 'Decrease']"
+                                ></dropdown>
+                              </div>
+                            </div>
+                            <!-- three -->
+                            <div class="flex-accordians-body three">
+                              <div class="accordian-body-one">
+                                <label class="switch">
+                                  <input type="checkbox" checked />
+                                  <span class="slider round"></span>
+                                </label>
+                              </div>
+                              <div class="accordian-body-two">
+                                <h4>California</h4>
+                              </div>
+                              <div class="checkboc">
+                                <input type="checkbox" />
+                                <span class="checkmark"></span>
+                              </div>
+                              <div class="accordian-body-three flex-two">
+                                <dropdown
+                                  default-value="15%"
+                                  :options="staticPercentage"
+                                ></dropdown>
+                                <dropdown
+                                  default-value="Increase"
+                                  :options="['Increase', 'Decrease']"
+                                ></dropdown>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- /.accordion-item-body -->
+                      </div>
+                      <!-- two -->
+                      <div
+                        :class="['accordion-item', openCollapse.includes('vehicle-plan') ? 'active' : '']"
+                      >
+                        <div
+                          class="accordion-item-header"
+                          @click="handleCollapse('vehicle-plan')"
+                        >
+                          <h4>Single or Multi-Vehicle Plan</h4>
+                        </div>
+                        <!-- /.accordion-item-header -->
+                        <div class="accordion-item-body">
+                          <div class="accordion-item-body-content">
+                            <div class="flex-accordians-body one">
+                              <div class="accordian-body-one">
+                                <h4>Active</h4>
+                              </div>
+                              <div class="accordian-body-two">
+                                <h4>Brands</h4>
+                              </div>
+                              <div class="accordian-body-check">
+                                <h4>Exclude</h4>
+                              </div>
+                              <div class="accordian-body-three">
+                                <h4>Adjusted Max CPC</h4>
+                              </div>
+                            </div>
+                            <!-- two -->
+                            <div class="flex-accordians-body two">
+                              <div class="accordian-body-one">
+                                <label class="switch">
+                                  <input type="checkbox" checked />
+                                  <span class="slider round"></span>
+                                </label>
+                              </div>
+                              <div class="accordian-body-two">
+                                <h4>California</h4>
+                              </div>
+                              <div class="checkboc">
+                                <input type="checkbox" />
+                                <span class="checkmark"></span>
+                              </div>
+                              <div class="accordian-body-three flex-two">
+                                <dropdown
+                                  default-value="5%"
+                                  :options="staticPercentage"
+                                ></dropdown>
+                                <dropdown
+                                  default-value="Increase"
+                                  :options="['Increase', 'Decrease']"
+                                ></dropdown>
+                              </div>
+                            </div>
+                            <!-- three -->
+                            <div class="flex-accordians-body three">
+                              <div class="accordian-body-one">
+                                <label class="switch">
+                                  <input type="checkbox" checked />
+                                  <span class="slider round"></span>
+                                </label>
+                              </div>
+                              <div class="accordian-body-two">
+                                <h4>California</h4>
+                              </div>
+                              <div class="checkboc">
+                                <input type="checkbox" />
+                                <span class="checkmark"></span>
+                              </div>
+                              <div class="accordian-body-three flex-two">
+                                <dropdown
+                                  default-value="15%"
+                                  :options="staticPercentage"
+                                ></dropdown>
+                                <dropdown
+                                  default-value="Increase"
+                                  :options="['Increase', 'Decrease']"
+                                ></dropdown>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- /.accordion-item-body -->
+                      </div>
+                      <!-- three -->
+                      <div
+                        :class="['accordion-item', openCollapse.includes('driver-age') ? 'active' : '']"
+                      >
+                        <div
+                          class="accordion-item-header"
+                          @click="handleCollapse('driver-age')"
+                        >
+                          <h4>Driver Age</h4>
+                        </div>
+                        <!-- /.accordion-item-header -->
+                        <div class="accordion-item-body">
+                          <div class="accordion-item-body-content">
+                            <div class="flex-accordians-body one">
+                              <div class="accordian-body-one">
+                                <h4>Active</h4>
+                              </div>
+                              <div class="accordian-body-two">
+                                <h4>Brands</h4>
+                              </div>
+                              <div class="accordian-body-check">
+                                <h4>Exclude</h4>
+                              </div>
+                              <div class="accordian-body-three">
+                                <h4>Adjusted Max CPC</h4>
+                              </div>
+                            </div>
+                            <!-- two -->
+                            <div class="flex-accordians-body two">
+                              <div class="accordian-body-one">
+                                <label class="switch">
+                                  <input type="checkbox" checked />
+                                  <span class="slider round"></span>
+                                </label>
+                              </div>
+                              <div class="accordian-body-two">
+                                <h4>California</h4>
+                              </div>
+                              <div class="checkboc">
+                                <input type="checkbox" />
+                                <span class="checkmark"></span>
+                              </div>
+                              <div class="accordian-body-three flex-two">
+                                <dropdown
+                                  default-value="5%"
+                                  :options="staticPercentage"
+                                ></dropdown>
+                                <dropdown
+                                  default-value="Increase"
+                                  :options="['Increase', 'Decrease']"
+                                ></dropdown>
+                              </div>
+                            </div>
+                            <!-- three -->
+                            <div class="flex-accordians-body three">
+                              <div class="accordian-body-one">
+                                <label class="switch">
+                                  <input type="checkbox" checked />
+                                  <span class="slider round"></span>
+                                </label>
+                              </div>
+                              <div class="accordian-body-two">
+                                <h4>California</h4>
+                              </div>
+                              <div class="checkboc">
+                                <input type="checkbox" />
+                                <span class="checkmark"></span>
+                              </div>
+                              <div class="accordian-body-three flex-two">
+                                <dropdown
+                                  default-value="15%"
+                                  :options="staticPercentage"
+                                ></dropdown>
+                                <dropdown
+                                  default-value="Increase"
+                                  :options="['Increase', 'Decrease']"
+                                ></dropdown>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- /.accordion-item-body -->
+                      </div>
+                      <!-- four -->
+                      <div
+                        :class="['accordion-item', openCollapse.includes('license-age') ? 'active' : '']"
+                      >
+                        <div
+                          class="accordion-item-header"
+                          @click="handleCollapse('license-age')"
+                        >
+                          <h4>License Age</h4>
+                        </div>
+                        <!-- /.accordion-item-header -->
+                        <div class="accordion-item-body">
+                          <div class="accordion-item-body-content">
+                            <div class="flex-accordians-body one">
+                              <div class="accordian-body-one">
+                                <h4>Active</h4>
+                              </div>
+                              <div class="accordian-body-two">
+                                <h4>Brands</h4>
+                              </div>
+                              <div class="accordian-body-check">
+                                <h4>Exclude</h4>
+                              </div>
+                              <div class="accordian-body-three">
+                                <h4>Adjusted Max CPC</h4>
+                              </div>
+                            </div>
+                            <!-- two -->
+                            <div class="flex-accordians-body two">
+                              <div class="accordian-body-one">
+                                <label class="switch">
+                                  <input type="checkbox" checked />
+                                  <span class="slider round"></span>
+                                </label>
+                              </div>
+                              <div class="accordian-body-two">
+                                <h4>California</h4>
+                              </div>
+                              <div class="checkboc">
+                                <input type="checkbox" />
+                                <span class="checkmark"></span>
+                              </div>
+                              <div class="accordian-body-three flex-two">
+                                <dropdown
+                                  default-value="5%"
+                                  :options="staticPercentage"
+                                ></dropdown>
+                                <dropdown
+                                  default-value="Increase"
+                                  :options="['Increase', 'Decrease']"
+                                ></dropdown>
+                              </div>
+                            </div>
+                            <!-- three -->
+                            <div class="flex-accordians-body three">
+                              <div class="accordian-body-one">
+                                <label class="switch">
+                                  <input type="checkbox" checked />
+                                  <span class="slider round"></span>
+                                </label>
+                              </div>
+                              <div class="accordian-body-two">
+                                <h4>California</h4>
+                              </div>
+                              <div class="checkboc">
+                                <input type="checkbox" />
+                                <span class="checkmark"></span>
+                              </div>
+                              <div class="accordian-body-three flex-two">
+                                <dropdown
+                                  default-value="15%"
+                                  :options="staticPercentage"
+                                ></dropdown>
+                                <dropdown
+                                  default-value="Increase"
+                                  :options="['Increase', 'Decrease']"
+                                ></dropdown>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- /.accordion-item-body -->
+                      </div>
+                      <!--  -->
+                      <div
+                        :class="['accordion-item', openCollapse.includes('claims') ? 'active' : '']"
+                      >
+                        <div
+                          class="accordion-item-header"
+                          @click="handleCollapse('claims')"
+                        >
+                          <h4>Claims (within last 5 years)</h4>
+                        </div>
+                        <!-- /.accordion-item-header -->
+                        <div class="accordion-item-body">
+                          <div class="accordion-item-body-content">
+                            <div class="flex-accordians-body one">
+                              <div class="accordian-body-one">
+                                <h4>Active</h4>
+                              </div>
+                              <div class="accordian-body-two">
+                                <h4>Brands</h4>
+                              </div>
+                              <div class="accordian-body-check">
+                                <h4>Exclude</h4>
+                              </div>
+                              <div class="accordian-body-three">
+                                <h4>Adjusted Max CPC</h4>
+                              </div>
+                            </div>
+                            <!-- two -->
+                            <div class="flex-accordians-body two">
+                              <div class="accordian-body-one">
+                                <label class="switch">
+                                  <input type="checkbox" checked />
+                                  <span class="slider round"></span>
+                                </label>
+                              </div>
+                              <div class="accordian-body-two">
+                                <h4>California</h4>
+                              </div>
+                              <div class="checkboc">
+                                <input type="checkbox" />
+                                <span class="checkmark"></span>
+                              </div>
+                              <div class="accordian-body-three flex-two">
+                                <dropdown
+                                  default-value="5%"
+                                  :options="staticPercentage"
+                                ></dropdown>
+                                <dropdown
+                                  default-value="Increase"
+                                  :options="['Increase', 'Decrease']"
+                                ></dropdown>
+                              </div>
+                            </div>
+                            <!-- three -->
+                            <div class="flex-accordians-body three">
+                              <div class="accordian-body-one">
+                                <label class="switch">
+                                  <input type="checkbox" checked />
+                                  <span class="slider round"></span>
+                                </label>
+                              </div>
+                              <div class="accordian-body-two">
+                                <h4>California</h4>
+                              </div>
+                              <div class="checkboc">
+                                <input type="checkbox" />
+                                <span class="checkmark"></span>
+                              </div>
+                              <div class="accordian-body-three flex-two">
+                                <dropdown
+                                  default-value="15%"
+                                  :options="staticPercentage"
+                                ></dropdown>
+                                <dropdown
+                                  default-value="Increase"
+                                  :options="['Increase', 'Decrease']"
+                                ></dropdown>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- /.accordion-item-body -->
+                      </div>
+                      <!--  -->
+                      <div
+                        :class="['accordion-item', openCollapse.includes('violations') ? 'active' : '']"
+                      >
+                        <div
+                          class="accordion-item-header"
+                          @click="handleCollapse('violations')"
+                        >
+                          <h4>Violations (within last 5 years)</h4>
+                        </div>
+                        <!-- /.accordion-item-header -->
+                        <div class="accordion-item-body">
+                          <div class="accordion-item-body-content">
+                            <div class="flex-accordians-body one">
+                              <div class="accordian-body-one">
+                                <h4>Active</h4>
+                              </div>
+                              <div class="accordian-body-two">
+                                <h4>Brands</h4>
+                              </div>
+                              <div class="accordian-body-check">
+                                <h4>Exclude</h4>
+                              </div>
+                              <div class="accordian-body-three">
+                                <h4>Adjusted Max CPC</h4>
+                              </div>
+                            </div>
+                            <!-- two -->
+                            <div class="flex-accordians-body two">
+                              <div class="accordian-body-one">
+                                <label class="switch">
+                                  <input type="checkbox" checked />
+                                  <span class="slider round"></span>
+                                </label>
+                              </div>
+                              <div class="accordian-body-two">
+                                <h4>California</h4>
+                              </div>
+                              <div class="checkboc">
+                                <input type="checkbox" />
+                                <span class="checkmark"></span>
+                              </div>
+                              <div class="accordian-body-three flex-two">
+                                <dropdown
+                                  default-value="5%"
+                                  :options="staticPercentage"
+                                ></dropdown>
+                                <dropdown
+                                  default-value="Increase"
+                                  :options="['Increase', 'Decrease']"
+                                ></dropdown>
+                              </div>
+                            </div>
+                            <!-- three -->
+                            <div class="flex-accordians-body three">
+                              <div class="accordian-body-one">
+                                <label class="switch">
+                                  <input type="checkbox" checked />
+                                  <span class="slider round"></span>
+                                </label>
+                              </div>
+                              <div class="accordian-body-two">
+                                <h4>California</h4>
+                              </div>
+                              <div class="checkboc">
+                                <input type="checkbox" />
+                                <span class="checkmark"></span>
+                              </div>
+                              <div class="accordian-body-three flex-two">
+                                <dropdown
+                                  default-value="15%"
+                                  :options="staticPercentage"
+                                ></dropdown>
+                                <dropdown
+                                  default-value="Increase"
+                                  :options="['Increase', 'Decrease']"
+                                ></dropdown>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- /.accordion-item-body -->
+                      </div>
+                      <!--  -->
+                      <div
+                        :class="['accordion-item', openCollapse.includes('marital-status') ? 'active' : '']"
+                      >
+                        <div
+                          class="accordion-item-header"
+                          @click="handleCollapse('marital-status')"
+                        >
+                          <h4>Marital Status</h4>
+                        </div>
+                        <!-- /.accordion-item-header -->
+                        <div class="accordion-item-body">
+                          <div class="accordion-item-body-content">
+                            <div class="flex-accordians-body one">
+                              <div class="accordian-body-one">
+                                <h4>Active</h4>
+                              </div>
+                              <div class="accordian-body-two">
+                                <h4>Brands</h4>
+                              </div>
+                              <div class="accordian-body-check">
+                                <h4>Exclude</h4>
+                              </div>
+                              <div class="accordian-body-three">
+                                <h4>Adjusted Max CPC</h4>
+                              </div>
+                            </div>
+                            <!-- two -->
+                            <div class="flex-accordians-body two">
+                              <div class="accordian-body-one">
+                                <label class="switch">
+                                  <input type="checkbox" checked />
+                                  <span class="slider round"></span>
+                                </label>
+                              </div>
+                              <div class="accordian-body-two">
+                                <h4>California</h4>
+                              </div>
+                              <div class="checkboc">
+                                <input type="checkbox" />
+                                <span class="checkmark"></span>
+                              </div>
+                              <div class="accordian-body-three flex-two">
+                                <dropdown
+                                  default-value="5%"
+                                  :options="staticPercentage"
+                                ></dropdown>
+                                <dropdown
+                                  default-value="Increase"
+                                  :options="['Increase', 'Decrease']"
+                                ></dropdown>
+                              </div>
+                            </div>
+                            <!-- three -->
+                            <div class="flex-accordians-body three">
+                              <div class="accordian-body-one">
+                                <label class="switch">
+                                  <input type="checkbox" checked />
+                                  <span class="slider round"></span>
+                                </label>
+                              </div>
+                              <div class="accordian-body-two">
+                                <h4>California</h4>
+                              </div>
+                              <div class="checkboc">
+                                <input type="checkbox" />
+                                <span class="checkmark"></span>
+                              </div>
+                              <div class="accordian-body-three flex-two">
+                                <dropdown
+                                  default-value="15%"
+                                  :options="staticPercentage"
+                                ></dropdown>
+                                <dropdown
+                                  default-value="Increase"
+                                  :options="['Increase', 'Decrease']"
+                                ></dropdown>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- /.accordion-item-body -->
+                      </div>
+                      <!--  -->
+                      <div
+                        :class="['accordion-item', openCollapse.includes('homeowner-status') ? 'active' : '']"
+                      >
+                        <div
+                          class="accordion-item-header"
+                          @click="handleCollapse('homeowner-status')"
+                        >
+                          <h4>Homeowner Status</h4>
+                        </div>
+                        <!-- /.accordion-item-header -->
+                        <div class="accordion-item-body">
+                          <div class="accordion-item-body-content">
+                            <div class="flex-accordians-body one">
+                              <div class="accordian-body-one">
+                                <h4>Active</h4>
+                              </div>
+                              <div class="accordian-body-two">
+                                <h4>Brands</h4>
+                              </div>
+                              <div class="accordian-body-check">
+                                <h4>Exclude</h4>
+                              </div>
+                              <div class="accordian-body-three">
+                                <h4>Adjusted Max CPC</h4>
+                              </div>
+                            </div>
+                            <!-- two -->
+                            <div class="flex-accordians-body two">
+                              <div class="accordian-body-one">
+                                <label class="switch">
+                                  <input type="checkbox" checked />
+                                  <span class="slider round"></span>
+                                </label>
+                              </div>
+                              <div class="accordian-body-two">
+                                <h4>California</h4>
+                              </div>
+                              <div class="checkboc">
+                                <input type="checkbox" />
+                                <span class="checkmark"></span>
+                              </div>
+                              <div class="accordian-body-three flex-two">
+                                <dropdown
+                                  default-value="5%"
+                                  :options="staticPercentage"
+                                ></dropdown>
+                                <dropdown
+                                  default-value="Increase"
+                                  :options="['Increase', 'Decrease']"
+                                ></dropdown>
+                              </div>
+                            </div>
+                            <!-- three -->
+                            <div class="flex-accordians-body three">
+                              <div class="accordian-body-one">
+                                <label class="switch">
+                                  <input type="checkbox" checked />
+                                  <span class="slider round"></span>
+                                </label>
+                              </div>
+                              <div class="accordian-body-two">
+                                <h4>California</h4>
+                              </div>
+                              <div class="checkboc">
+                                <input type="checkbox" />
+                                <span class="checkmark"></span>
+                              </div>
+                              <div class="accordian-body-three flex-two">
+                                <dropdown
+                                  default-value="15%"
+                                  :options="staticPercentage"
+                                ></dropdown>
+                                <dropdown
+                                  default-value="Increase"
+                                  :options="['Increase', 'Decrease']"
+                                ></dropdown>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- /.accordion-item-body -->
+                      </div>
+                      <!--  -->
+                      <div
+                        :class="['accordion-item', openCollapse.includes('credit-score') ? 'active' : '']"
+                      >
+                        <div
+                          class="accordion-item-header"
+                          @click="handleCollapse('credit-score')"
+                        >
+                          <h4>Credit Score</h4>
+                        </div>
+                        <!-- /.accordion-item-header -->
+                        <div class="accordion-item-body">
+                          <div class="accordion-item-body-content">
+                            <div class="flex-accordians-body one">
+                              <div class="accordian-body-one">
+                                <h4>Active</h4>
+                              </div>
+                              <div class="accordian-body-two">
+                                <h4>Brands</h4>
+                              </div>
+                              <div class="accordian-body-check">
+                                <h4>Exclude</h4>
+                              </div>
+                              <div class="accordian-body-three">
+                                <h4>Adjusted Max CPC</h4>
+                              </div>
+                            </div>
+                            <!-- two -->
+                            <div class="flex-accordians-body two">
+                              <div class="accordian-body-one">
+                                <label class="switch">
+                                  <input type="checkbox" checked />
+                                  <span class="slider round"></span>
+                                </label>
+                              </div>
+                              <div class="accordian-body-two">
+                                <h4>California</h4>
+                              </div>
+                              <div class="checkboc">
+                                <input type="checkbox" />
+                                <span class="checkmark"></span>
+                              </div>
+                              <div class="accordian-body-three flex-two">
+                                <dropdown
+                                  default-value="5%"
+                                  :options="staticPercentage"
+                                ></dropdown>
+                                <dropdown
+                                  default-value="Increase"
+                                  :options="['Increase', 'Decrease']"
+                                ></dropdown>
+                              </div>
+                            </div>
+                            <!-- three -->
+                            <div class="flex-accordians-body three">
+                              <div class="accordian-body-one">
+                                <label class="switch">
+                                  <input type="checkbox" checked />
+                                  <span class="slider round"></span>
+                                </label>
+                              </div>
+                              <div class="accordian-body-two">
+                                <h4>California</h4>
+                              </div>
+                              <div class="checkboc">
+                                <input type="checkbox" />
+                                <span class="checkmark"></span>
+                              </div>
+                              <div class="accordian-body-three flex-two">
+                                <dropdown
+                                  default-value="15%"
+                                  :options="staticPercentage"
+                                ></dropdown>
+                                <dropdown
+                                  default-value="Increase"
+                                  :options="['Increase', 'Decrease']"
+                                ></dropdown>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- /.accordion-item-body -->
+                      </div>
+                    </div>
+                  </section>
+                </div>
+                <div
+                  :class="['tabcontent', activeTab === 'motorcycle' ? 'show' : '']"
+                ></div>
+                <div
+                  :class="['tabcontent', activeTab === 'home' ? 'show' : '']"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="footer-wrapper">
+          <img
+            src="./assets/logo-white.svg"
+            alt="logo"
+            width="142px"
+            height="30px"
+          />
+          <div class="footer-menu">
+            <a to="#" class="footer-menu-item">Disclaimer</a>
+            <a to="#" class="footer-menu-item">Terms</a>
+            <a to="#" class="footer-menu-item">Privacy</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <template id="dropdown">
+      <button
+        :class="['dropdown', open ? 'open' : '']"
+        @click="toggleDropdown"
+        @blur="closeMenu()"
+      >
+        <span class="dropdown-value">{{value}}</span>
+        <img src="./assets/dropdown-arrow.svg" alt="arrow" />
+        <div class="options">
+          <div
+            v-for="option in options"
+            class="option"
+            @click="(event) => handleSelection(event, option)"
+          >
+            {{option}}
+          </div>
+        </div>
+      </button>
+    </template>
+
+    <template id="multi-select-dropdown">
+      <div
+        :class="['flex-selector dropdown', open ? 'open' : '']"
+        @click="toggleDropdown"
+        @blur="closeMenu()"
+      >
+        <p class="m-0" v-if="values.length === 0">Please select a state</p>
+        <div class="multi-selector" v-for="value in values">
+          <h4>{{value}}</h4>
+          <img
+            src="./assets/cross.svg"
+            alt=""
+            @click="(e) => handleRemove(e, value)"
+          />
+        </div>
+        <div class="multi-selector-dropdown">
+          <img src="./assets/dropdown-arrow.svg" alt="" />
+        </div>
+        <div class="options">
+          <div
+            v-for="option in options"
+            :class="['option', values.includes(option) ? 'selected' : '']"
+            @click="(event) => handleSelection(event, option)"
+          >
+            {{option}}
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <template id="tooltip">
+      <div class="d-flex align-items-center gap-2">
+        <slot></slot>
+        <img
+          data-bs-toggle="tooltip"
+          data-bs-title="Default tooltip"
+          src="./assets/info.svg"
+          alt=""
+        />
+      </div>
+    </template>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+    <script src="./home.js"></script>
+  </body>
+</html>
